@@ -17,4 +17,10 @@ class UserController extends Controller
                ->paginate(10);
            return view('pages.users.index', compact('users'));
        }
+
+           //create
+    public function create()
+    {
+        return view('pages.users.create');
+    }
 }
