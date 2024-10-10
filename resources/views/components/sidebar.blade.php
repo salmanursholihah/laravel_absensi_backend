@@ -14,8 +14,7 @@
             </li>
 
             <li class="nav-item ">
-                {{-- <a href="{{ route('users.index') }}" class="nav-link "><i class="fas fa-columns"></i> --}}
-                    <a href="" class="nav-link "><i class="fas fa-columns"></i>
+                <a href="{{ route('users.index') }}" class="nav-link "><i class="fas fa-columns"></i>
                     <span>Users</span></a>
             </li>
 
