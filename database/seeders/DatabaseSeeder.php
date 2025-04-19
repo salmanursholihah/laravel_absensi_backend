@@ -22,5 +22,16 @@ class DatabaseSeeder extends Seeder
             'email' => 'rudi@absensi.com',
             'password' => Hash::make('12345678'),
         ]);
+
+        \App\Models\Company::create([
+            'name' => 'PT. CTA-BYTE',
+            'email' => 'cta@absensi.com',
+            'address' => 'Jl. indonesia raya',
+            'latitude' => '-7.4656239',
+            'longitude' => '109.5364833',
+            'radius_km' => '0.5',
+            'time_in' => '08:00',
+            'time_out' => '17:00',
+        ]);
     }
 }
