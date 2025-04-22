@@ -43,3 +43,6 @@ Route::get('/company', [App\Http\Controllers\Api\CompanyController::class, 'show
 
  //create permission
  Route::apiResource('/api-permissions', App\Http\Controllers\Api\PermissionController::class)->middleware('auth:sanctum');
+
+ //notes
+ Route::apiResource('/api-notes', App\Http\Controllers\Api\NoteController::class)->middleware('auth:sanctum');
