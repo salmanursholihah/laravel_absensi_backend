@@ -17,10 +17,9 @@ return new class extends Migration
             // departement 
             $table->string('department')->nullable();
             // face embedding 
-            $table->string('face_embedding')->nullable();
+            $table->text('face_embedding')->nullable();
             // image url 
             $table->string('image_url')->nullable();
-            
         });
     }
 

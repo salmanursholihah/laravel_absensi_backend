@@ -28,7 +28,6 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 //company
 Route::get('/company', [App\Http\Controllers\Api\CompanyController::class, 'show'])->middleware('auth:sanctum');
 
-
  //checkin
  Route::post('/checkin', [App\Http\Controllers\Api\AttendanceController::class, 'checkin'])->middleware('auth:sanctum');
  
@@ -39,7 +38,7 @@ Route::get('/company', [App\Http\Controllers\Api\CompanyController::class, 'show
  Route::get('/is-checkin', [App\Http\Controllers\Api\AttendanceController::class, 'isCheckedin'])->middleware('auth:sanctum');
  
  //update profile
- Route::post('/update-profile', [App\Http\Controllers\Api\AuthController::class, 'updateProfile'])->middleware('auth:sanctum');
+ Route::post('/updateface', [App\Http\Controllers\Api\AuthController::class, 'updateProfile'])->middleware('auth:sanctum');
 
  //create permission
  Route::apiResource('/api-permissions', App\Http\Controllers\Api\PermissionController::class)->middleware('auth:sanctum');
