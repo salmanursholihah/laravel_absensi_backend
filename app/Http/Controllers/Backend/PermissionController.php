@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Permission;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
 
 class PermissionController extends Controller
 {
@@ -39,7 +42,84 @@ class PermissionController extends Controller
     {
         $permission = Permission::find($id);
         $permission->is_approved = $request->is_approved;
+        $str = $request->is_approved == 1 ? 'Disetujui' : 'Ditolak';
         $permission->save();
+        $this->sendNotificationToUser($permission->user_id, 'Status Izin anda adalah ' . $str);
         return redirect()->route('permissions.index')->with('success', 'Permission updated successfully');
+    }
+
+    // // send notification to user
+    // public function sendNotificationToUser($userId, $message)
+    // {
+    //     // Dapatkan FCM token user dari tabel 'users'
+
+    //     $user = User::find($userId);
+    //     $token = $user->fcm_token;
+
+    //     // Kirim notifikasi ke perangkat Android
+    //     $messaging = app('firebase.messaging');
+    //     $notification = Notification::create('Status Izin', $message);
+
+    //     $message = CloudMessage::withTarget('token', $token)
+    //         ->withNotification($notification);
+
+    //     $messaging->send($message);
+    // }
+
+    // public function sendNotificationToUser($userId, $message)
+    // {
+    //     $user = User::find($userId);
+
+    //     if (!$user || !$user->fcm_token) {
+    //         // Log::warning("FCM token tidak tersedia untuk user ID: $userId");
+    //         return; // atau bisa lempar exception jika perlu
+    //     }
+
+    //     $token = $user->fcm_token;
+
+    //     $messaging = app('firebase.messaging');
+    //     $notification = Notification::create('Status Izin', $message);
+
+    //     $message = CloudMessage::withTarget('token', $token)
+    //         ->withNotification($notification);
+
+    //     $messaging->send($message);
+    // }
+
+
+    public function sendNotificationToUser($userId, $message)
+    {
+        try {
+            // Dapatkan FCM token user dari tabel 'users'
+            $user = User::find($userId);
+
+            // Cek apakah user ditemukan
+            if (!$user) {
+                // \Log::error("User dengan ID {$userId} tidak ditemukan");
+                return false;
+            }
+
+            // Cek apakah token FCM tersedia
+            if (empty($user->fcm_token)) {
+                // \Log::error("FCM token untuk user ID {$userId} kosong atau tidak tersedia");
+                return false;
+            }
+
+            $token = $user->fcm_token;
+
+            // Kirim notifikasi ke perangkat Android
+            $messaging = app('firebase.messaging');
+            $notification = Notification::create('Status Izin', $message);
+
+            $message = CloudMessage::withTarget('token', $token)
+                ->withNotification($notification);
+
+            $result = $messaging->send($message);
+            // \Log::info("Notifikasi berhasil dikirim ke user ID {$userId}");
+            return $result;
+        } catch (\Exception $e) {
+            // \Log::error("Error saat mengirim notifikasi: " . $e->getMessage());
+            return false;
+        }
     }
 }
