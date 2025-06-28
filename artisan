@@ -37,6 +37,12 @@ $status = $kernel->handle(
     new Symfony\Component\Console\Output\ConsoleOutput
 );
 
+$app->singleton(
+    Illuminate\Contracts\Console\Kernel::class,
+    App\Console\Kernel::class
+);
+
+
 /*
 |--------------------------------------------------------------------------
 | Shutdown The Application

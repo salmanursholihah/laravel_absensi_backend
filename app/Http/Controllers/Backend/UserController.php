@@ -6,18 +6,32 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Company;
 
 class UserController extends Controller
 {
     //index
-    public function index()
-    {
-        //search by name, pagination 10
-        $users = User::where('name', 'like', '%' . request('name') . '%')
-            ->orderBy('id', 'desc')
-            ->paginate(10);
-        return view('pages.users.index', compact('users'));
-    }
+public function index(Request $request)
+{
+    $companies = Company::all();
+
+        $users = User::query()
+        ->when($request->input('name'), function ($query, $name) {
+            $query->where('name', 'like', '%' . $name . '%');
+        })
+        ->when($request->input('companies_id'), function ($query, $companiesid) {
+            $query->where('companies_id', $companiesid); // Pastikan kolomnya benar
+        })
+        ->when($request->input('start_date') && $request->input('end_date'), function ($query) use ($request) {
+            $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
+        })
+        ->orderBy('id', 'desc')
+        ->paginate(10);
+
+    // Kirim ke view
+    return view('pages.users.index', compact('users', 'companies'));
+}
+
 
     //create
     public function create()

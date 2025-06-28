@@ -12,16 +12,46 @@ use Kreait\Firebase\Messaging\Notification;
 class PermissionController extends Controller
 {
     //index
+    // public function index(Request $request)
+    // {
+    //     $permissions = Permission::with('user')
+    //         ->when($request->input('name'), function ($query, $name) {
+    //             $query->whereHas('user', function ($query) use ($name) {
+    //                 $query->where('name', 'like', '%' . $name . '%');
+    //             });
+    //         })->orderBy('id', 'desc')->paginate(10);
+    //     return view('pages.permission.index', compact('permissions'));
+    // }
+
     public function index(Request $request)
-    {
-        $permissions = Permission::with('user')
-            ->when($request->input('name'), function ($query, $name) {
-                $query->whereHas('user', function ($query) use ($name) {
-                    $query->where('name', 'like', '%' . $name . '%');
-                });
-            })->orderBy('id', 'desc')->paginate(10);
+{
+    $permissions = Permission::with('user')
+        ->when($request->input('name'), function ($query, $name) {
+            $query->whereHas('user', function ($query) use ($name) {
+                $query->where('name', 'like', '%' . $name . '%');
+            });
+        })
+        ->when($request->input('status'), function ($query, $status) {
+            $query->where('status', $status);
+        })
+        ->when($request->input('start_date') && $request->input('end_date'), function ($query) use ($request) {
+            $query->whereBetween('date', [$request->start_date, $request->end_date]);
+        })
+        ->when($request->input('filter') === 'weekly', function ($query) {
+            $query->whereBetween('date', [
+                now()->startOfWeek(), now()->endOfWeek()
+            ]);
+        })
+        ->when($request->input('filter') === 'monthly', function ($query) {
+            $query->whereMonth('date', now()->month)
+                  ->whereYear('date', now()->year);
+        })
+        ->orderBy('id', 'desc')
+        ->paginate(10);
+
         return view('pages.permission.index', compact('permissions'));
-    }
+}
+
 
     //view
     public function show($id)

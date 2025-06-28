@@ -32,6 +32,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
+
                             <h4>All Posts</h4>
                             <div class="card-header-form">
                                 <form method="GET" action="{{ route('pages.catatans.index') }}">
@@ -69,13 +70,14 @@
                                             <td>
                                                 @if ($catatan->images && $catatan->images->count())
                                                 @foreach($catatan->images as $image)
-                                                <img src="{{ asset('storage/' . $image->image_path) }}" width="80"
-                                                    style="margin: 2px; border-radius: 4px;">
+                                                <img src="{{ asset('storage/catatan_images/' . $image->image_path) }}"
+                                                    width="80" style="margin: 2px; border-radius: 4px;">
                                                 @endforeach
                                                 @else
                                                 <span>-</span>
                                                 @endif
                                             </td>
+
                                             <td>{{ $catatan->created_at }}</td>
                                             <td>{{ $catatan->updated_at }}</td>
                                             <td>
