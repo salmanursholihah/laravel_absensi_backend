@@ -26,19 +26,32 @@ class CheckRole
     //     return $next($request);
     // }
 
-    public function handle(Request $request, Closure $next, $roles)
+//     public function handle(Request $request, Closure $next, $roles)
+// {
+//     if (!auth()->check()) {
+//         return redirect('/login');
+//     }
+
+//     // Ubah string 'admin,user' jadi array ['admin', 'user']
+//     $rolesArray = explode(',', $roles);
+//     if (!in_array(auth()->user()->role, $rolesArray)) {
+//         abort(403, 'Unauthorized.');
+//     }
+
+//     return $next($request);
+// }
+public function handle($request, Closure $next, $role)
 {
-    if (!auth()->check()) {
-        return redirect('/login');
+    if (auth()->check()) {
+        $user = auth()->user();
+        dd($user); // Pastikan user terautentikasi & role TIDAK kosong.
+        if ($user->role === $role) {
+            return $next($request);
+        }
     }
 
-    // Ubah string 'admin,user' jadi array ['admin', 'user']
-    $rolesArray = explode(',', $roles);
-    if (!in_array(auth()->user()->role, $rolesArray)) {
-        abort(403, 'Unauthorized.');
-    }
-
-    return $next($request);
+    abort(403, 'Role not matched or not authenticated');
 }
+
 
 }

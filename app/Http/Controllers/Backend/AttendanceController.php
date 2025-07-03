@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
+
 
 class AttendanceController extends Controller
 {
@@ -54,4 +57,46 @@ public function rekapKeterlambatan(Request $request)
 }
 
 
+public function cetakPerUser($userId)
+{
+    $laporan = Attendance::where('user_id', $userId)->get();
+    $pdf = Pdf::loadView('laporan.absensi_per_user', compact('laporan'));
+    return $pdf->download('laporan_absensi_per_user.pdf');
+}
+
+public function cetakMingguan($userId, $startDate, $endDate)
+{
+    $laporan = Attendance::where('user_id', $userId)
+        ->whereBetween('date', [$startDate, $endDate])
+        ->get();
+
+    $pdf = Pdf::loadView('laporan.absensi_mingguan', compact('laporan'));
+    return $pdf->download('laporan_absensi_mingguan.pdf');
+}
+
+public function cetakBulanan($userId, $bulan, $tahun)
+{
+    $laporan = Attendance::where('user_id', $userId)
+        ->whereMonth('date', $bulan)
+        ->whereYear('date', $tahun)
+        ->get();
+
+    $pdf = Pdf::loadView('laporan.absensi_bulanan', compact('laporan'));
+    return $pdf->download('laporan_absensi_bulanan.pdf');
+}
+
+
+ public function ExportPDF()
+    {
+        $rekapPerHari =Attendance::select(
+            DB::raw('date'),
+            DB::raw('COUNT(*) as total_absen')
+        )
+        ->groupby('date')
+        ->get();
+        
+    $pdf = Pdf::loadView('laporan.rekap_absensi_pdf', compact('rekapPerHari'));
+        return $pdf->download('rekap_absensi.pdf');
+
+}
 }
