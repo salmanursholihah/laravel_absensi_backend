@@ -40,21 +40,16 @@ class CheckRole
 
 //     return $next($request);
 // }
-public function handle($request, Closure $next, $roles)
+public function handle($request, Closure $next, ...$roles)
 {
-    if (auth()->check()) {
-        $user = auth()->user();
-        // dd($user); // Pastikan user terautentikasi & role TIDAK kosong.
+    if (!auth()->check()) {
+        abort(403, 'Not Authenticated');
+    }
 
     if (!in_array(auth()->user()->role, $roles)) {
         abort(403, 'Unauthorized');
     }
 
     return $next($request);
-
-
-    }
-
-    abort(403, 'Role not matched or not authenticated');
 }
 }

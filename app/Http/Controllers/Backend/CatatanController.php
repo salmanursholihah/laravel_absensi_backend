@@ -81,7 +81,7 @@ public function store(Request $request)
         $catatan->update([
             'title'       => $request->title,
             'description' => $request->description,
-            'image'       => $imagePath,
+            // 'image'       => $imagePath,
         ]);
 
         return redirect()->route('catatan.index')->with('success', 'Catatan berhasil diperbarui');

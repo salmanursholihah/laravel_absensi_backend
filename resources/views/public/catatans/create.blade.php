@@ -30,7 +30,7 @@
             <h2 class="section-title">Form Catatan</h2>
 
             <div class="card">
-                <form action="{{ route('catatan.store') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('public.catatans.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="card-header">
                         <h4>Input Catatan</h4>

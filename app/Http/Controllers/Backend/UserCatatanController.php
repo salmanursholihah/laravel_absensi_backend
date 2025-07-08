@@ -11,53 +11,57 @@ use Illuminate\Support\Facades\Storage;
 class UserCatatanController extends Controller
 {
 
-    public function index()
-    {
-        if (auth()->user()->role === 'user') {
-            $catatans = Catatan::latest()->paginate(10);
-        } else {
-            $catatans = Catatan::where('user_id', auth()->id())
-                               ->latest()
-                               ->paginate(10);
-        }
-
-        return view('public.catatans.index', compact('catatans'));
+public function index()
+{
+    if (auth()->user()->role === 'user') {
+        $catatans = Catatan::where('user_id', auth()->id())
+                           ->latest()
+                           ->paginate(10);
+    } else {
+        $catatans = Catatan::latest()->paginate(10);
     }
 
+    return view('public.catatans.index', compact('catatans'));
+}
     public function create()
     {
         return view('public.catatans.create');
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'title'       => 'required|string|max:255',
-            'description' => 'required|string',
-            'image'       => 'nullable|image|max:2048',
-        ]);
+public function store(Request $request)
+{
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'required|string',
+        // 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
 
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('image_catatans', 'public');
-        }
+    $data = $request->only(['title', 'description']);
 
-        Catatan::create([
-            'title'       => $request->title,
-            'description' => $request->description,
-            'image'       => $imagePath,
-            'user_id'     => auth()->id(),
-        ]);
-
-        return redirect()->route('catatan.index')->with('success', 'Catatan berhasil ditambahkan');
+    // Upload gambar jika ada
+    if ($request->hasFile('image')) {
+        $imagePath = $request->file('image')->store('catatan_images', 'public');
+        $data['image'] = $imagePath;
     }
 
-    public function edit(Catatan $catatan)
-    {
-    
+    // Tambahkan user_id jika perlu
+    $data['user_id'] = auth()->id();
 
-        return view('public.catatans.edit', compact('catatan'));
+    // Simpan ke database
+    \App\Models\Catatan::create($data);
+
+    return redirect()->route('public.catatans.index')->with('success', 'Catatan berhasil ditambahkan.');
+}
+
+public function edit(Catatan $catatan)
+{
+    if ($catatan->user_id !== auth()->id()) {
+        abort(403, 'Unauthorized');
     }
+
+    return view('public.catatans.edit', compact('catatan'));
+}
+
 
     public function update(Request $request, Catatan $catatan)
     {
@@ -66,7 +70,7 @@ class UserCatatanController extends Controller
         $request->validate([
             'title'       => 'required|string|max:255',
             'description' => 'required|string',
-            'image'       => 'nullable|image|max:2048',
+            // 'image'       => 'nullable|image|max:2048',
         ]);
 
         if ($request->hasFile('image')) {
@@ -81,10 +85,10 @@ class UserCatatanController extends Controller
         $catatan->update([
             'title'       => $request->title,
             'description' => $request->description,
-            'image'       => $imagePath,
+            // 'image'       => $imagePath,
         ]);
 
-        return redirect()->route('catatan.index')->with('success', 'Catatan berhasil diperbarui');
+        return redirect()->route('public.catatans.index')->with('success', 'Catatan berhasil diperbarui');
     }
 
     public function destroy(Catatan $catatan)
@@ -97,6 +101,6 @@ class UserCatatanController extends Controller
 
         $catatan->delete();
 
-        return redirect()->route('catatan.index')->with('success', 'Catatan berhasil dihapus');
+        return redirect()->route('public.catatans.index')->with('success', 'Catatan berhasil dihapus');
     }
 }

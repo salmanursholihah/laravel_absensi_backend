@@ -13,7 +13,7 @@
         <div class="section-header">
             <h1>Catatans</h1>
             <div class="section-header-button">
-                <a href="{{ route('catatan.create') }}" class="btn btn-primary">Add New</a>
+                <a href="{{ route('public.catatans.create') }}" class="btn btn-primary">Add New</a>
             </div>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
@@ -34,7 +34,7 @@
                         <div class="card-header">
                             <h4>All Posts</h4>
                             <div class="card-header-form">
-                                <form method="GET" action="{{ route('pages.catatans.index') }}">
+                                <form method="GET" action="{{ route('public.catatans.index') }}">
                                     <div class="input-group">
                                         <input type="text" class="form-control" placeholder="Search by title"
                                             name="name" value="{{ request('name') }}">
@@ -57,7 +57,7 @@
                                             <th>Image</th>
                                             <th>Created At</th>
                                             <th>Updated At</th>
-                                            <th>Action</th>
+                                            <!-- <th>Action</th> -->
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -79,7 +79,7 @@
 
                                             <td>{{ $catatan->created_at }}</td>
                                             <td>{{ $catatan->updated_at }}</td>
-                                            <td>
+                                            <!-- <td>
                                                 <a href="{{ route('catatan.edit', $catatan->id) }}"
                                                     class="btn btn-sm btn-warning">Edit</a>
                                                 <form action="{{ route('catatan.destroy', $catatan->id) }}"
@@ -89,7 +89,7 @@
                                                     <button onclick="return confirm('Yakin hapus catatan ini?')"
                                                         class="btn btn-sm btn-danger">Hapus</button>
                                                 </form>
-                                            </td>
+                                            </td> -->
                                         </tr>
                                         @empty
                                         <tr>

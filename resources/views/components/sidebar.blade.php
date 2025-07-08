@@ -7,15 +7,20 @@
             <a href="index.html">AM</a>
         </div>
         <ul class="sidebar-menu">
-            @if(auth()->user()->email === 'admin@gmail.com');
-            <li class="nav-item ">
-                <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Dashboard</span></a>
 
+            {{-- Menu khusus admin --}}
+            @if(auth()->user()->role === 'admin')
+            <li class="nav-item">
+                <a href="#" class="nav-link has-dropdown">
+                    <i class="fas fa-fire"></i><span>Dashboard</span>
+                </a>
             </li>
 
-            <li class=" nav-item ">
-                <a href=" {{ route('users.index') }}" class="nav-link "><i class="fas fa-columns"></i>
-                    <span>Users</span></a>
+            <li class="nav-item">
+                <a href="{{ route('users.index') }}" class="nav-link">
+                    <i class="fas fa-columns"></i>
+                    <span>Users</span>
+                </a>
             </li>
 
             <li class="nav-item">
@@ -24,37 +29,37 @@
                     <span>Company</span>
                 </a>
             </li>
+
             <li class="nav-item">
                 <a href="{{ route('attendances.index') }}" class="nav-link">
                     <i class="fas fa-columns"></i>
                     <span>Attendances</span>
                 </a>
             </li>
+
             <li class="nav-item">
                 <a href="{{ route('permissions.index') }}" class="nav-link">
                     <i class="fas fa-columns"></i>
                     <span>Permission</span>
                 </a>
             </li>
+
             <li class="nav-item">
                 <a href="{{ route('rekap.keterlambatan') }}" class="nav-link">
                     <i class="fas fa-columns"></i>
-                    <span>Rekap keterlambatan</span>
+                    <span>Rekap Keterlambatan</span>
                 </a>
             </li>
-
-
             @endif
+
+            {{-- Menu Catatan - untuk semua role --}}
             <li class="nav-item">
-                <a href="{{ route('catatan.index') }}" class="nav-link">
+                <a href="{{ route('public.catatans.index') }}" class="nav-link">
                     <i class="fas fa-columns"></i>
                     <span>Catatan</span>
                 </a>
             </li>
 
-
-
-
-
+        </ul>
     </aside>
 </div>
