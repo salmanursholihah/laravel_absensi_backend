@@ -50,13 +50,19 @@
                     <span>Rekap Keterlambatan</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="{{ route('catatan.index') }}" class="nav-link">
+                    <i class="fa fa-columns"></i>
+                    <span>catatan</span>
+                </a>
+            </li>
             @endif
 
             {{-- Menu Catatan - untuk semua role --}}
             <li class="nav-item">
                 <a href="{{ route('public.catatans.index') }}" class="nav-link">
                     <i class="fas fa-columns"></i>
-                    <span>Catatan</span>
+                    <span>user Catatan</span>
                 </a>
             </li>
 
