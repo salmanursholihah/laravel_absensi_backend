@@ -8,6 +8,7 @@ use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -43,8 +44,32 @@ class FortifyServiceProvider extends ServiceProvider
             return Limit::perMinute(5)->by($request->session()->get('login.id'));
         });
 
-        Fortify::loginView(function(){
-            return view('pages.auth.auth-login');
-        });
-    }
+     Fortify::loginView(function(){
+    return view('pages.auth.auth-login');
+});
+
+Fortify::registerView(function(){
+    return view('pages.auth.auth-register');
+});
+
+
+Fortify::resetPasswordView(function(){
+    return view ('pages.auth.auth-reset-password');
+});
+
+
+// Fortify::redirectTo([
+//  'login' => function () {
+//         $user = Auth::user();
+//         if ($user->role === 'admin') {
+//             return '/home';
+//         } elseif ($user->role === 'user') {
+//             return '/user/public';
+//         }
+
+//         return '/'; // fallback
+//     },
+// ]);
+
+}
 }

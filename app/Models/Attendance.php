@@ -14,5 +14,14 @@ class Attendance extends Model
     {
         return $this->belongsTo(User::class);
     }
+    protected $appends = ['is_late'];
+
+public function getIsLateAttribute()
+{
+    if (!$this->check_in_time) return false;
+
+    return strtotime($this->check_in_time) > strtotime('08:00:00');
+}
+
 
 }
