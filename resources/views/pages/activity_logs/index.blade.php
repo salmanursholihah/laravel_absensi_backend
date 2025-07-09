@@ -1,4 +1,4 @@
-@extends('layouts.app')
+<!-- @extends('layouts.app')
 
 @section('main')
 <div class="main-content">
@@ -39,4 +39,26 @@
         </div>
     </section>
 </div>
-@endsection
+@endsection -->
+
+
+<table>
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Action</th>
+            <th>Description</th>
+            <th>Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($logs as $log)
+        <tr>
+            <td>{{ $log->user->name ?? 'System' }}</td>
+            <td>{{ $log->action }}</td>
+            <td>{{ $log->description }}</td>
+            <td>{{ $log->created_at->diffForHumans() }}</td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>

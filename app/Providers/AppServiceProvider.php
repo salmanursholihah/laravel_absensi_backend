@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use App\Actions\Fortify\LoginResponse;
 
 
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -23,5 +24,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useBootstrapFive();
+view()->composer('*', function ($view) {
+    $view->with('navbar_notifications', auth()->check() ? auth()->user()->unreadNotifications : []);
+});
+
+
     }
+    
 }
