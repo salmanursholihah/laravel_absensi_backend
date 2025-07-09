@@ -18,4 +18,11 @@ class Catatan extends Model
     {
         return $this->hasMany(ImageCatatan::class);
     }
+
+ public function activityLogs()
+{
+    return $this->hasMany(ActivityLogs::class, 'model_id')
+        ->where('model_type', self::class);
+}
+
 }

@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Catatan;
 use Illuminate\Support\Facades\Storage;
+use App\Models\ActivityLogs;
+use App\Models\User;
+use App\Notifications\CatatanActionNotification;
 
 class CatatanController extends Controller
 {
@@ -32,22 +35,25 @@ public function store(Request $request)
     $request->validate([
         'title' => 'required|string|max:255',
         'description' => 'required|string',
-        // 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);
 
     $data = $request->only(['title', 'description']);
-
-    // Upload gambar jika ada
-    if ($request->hasFile('image')) {
-        $imagePath = $request->file('image')->store('catatan_images', 'public');
-        $data['image'] = $imagePath;
-    }
-
-    // Tambahkan user_id jika perlu
     $data['user_id'] = auth()->id();
 
-    // Simpan ke database
-    \App\Models\Catatan::create($data);
+    $catatan = \App\Models\Catatan::create($data);
+
+    ActivityLogs::create([
+        'user_id' => auth()->id(),
+        'action' => 'create',
+        'model_type' => Catatan::class,
+        'model_id' => $catatan->id,
+        'description' => "Membuat catatan #{$catatan->id} dengan judul '{$catatan->title}'",
+    ]);
+      // Kirim notifikasi ke admin misalnya
+    $admins = User::where('role', 'admin')->get();
+    foreach ($admins as $admin) {
+        $admin->notify(new CatatanActionNotification($catatan, 'dibuat'));
+    }
 
     return redirect()->route('catatan.index')->with('success', 'Catatan berhasil ditambahkan.');
 }
@@ -59,44 +65,53 @@ public function store(Request $request)
         return view('pages.catatans.edit', compact('catatan'));
     }
 
-    public function update(Request $request, Catatan $catatan)
-    {
+public function update(Request $request, Catatan $catatan)
+{
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'required|string',
+    ]);
+
+    $catatan->update([
+        'title' => $request->title,
+        'description' => $request->description,
+    ]);
+
+    ActivityLogs::create([
+        'user_id' => auth()->id(),
+        'action' => 'update',
+        'model_type' => Catatan::class,
+        'model_id' => $catatan->id,
+        'description' => "Memperbarui catatan #{$catatan->id} menjadi '{$catatan->title}'",
+    ]);
+
+    $admins = User::where('role', 'admin')->get();
+    foreach ($admins as $admin) {
+        $admin->notify(new CatatanActionNotification($catatan, 'diupdate'));
+    }
+    return redirect()->route('catatan.index')->with('success', 'Catatan berhasil diperbarui');
+}
 
 
-        $request->validate([
-            'title'       => 'required|string|max:255',
-            'description' => 'required|string',
-            // 'image'       => 'nullable|image|max:2048',
-        ]);
+public function destroy(Catatan $catatan)
+{
+    $catatanId = $catatan->id;
+    $catatanTitle = $catatan->title;
 
-        if ($request->hasFile('image')) {
-            if ($catatan->image && Storage::disk('public')->exists($catatan->image)) {
-                Storage::disk('public')->delete($catatan->image);
-            }
-            $imagePath = $request->file('image')->store('image_catatans', 'public');
-        } else {
-            $imagePath = $catatan->image;
-        }
+    $catatan->delete();
 
-        $catatan->update([
-            'title'       => $request->title,
-            'description' => $request->description,
-            // 'image'       => $imagePath,
-        ]);
-
-        return redirect()->route('catatan.index')->with('success', 'Catatan berhasil diperbarui');
+    ActivityLogs::create([
+        'user_id' => auth()->id(),
+        'action' => 'delete',
+        'model_type' => Catatan::class,
+        'model_id' => $catatanId,
+        'description' => "Menghapus catatan #{$catatanId} berjudul '{$catatanTitle}'",
+    ]);
+        $admins = User::where('role', 'admin')->get();
+    foreach ($admins as $admin) {
+        $admin->notify(new CatatanActionNotification($catatan, 'dihapus'));
     }
 
-    public function destroy(Catatan $catatan)
-    {
-     
-
-        if ($catatan->image && Storage::disk('public')->exists($catatan->image)) {
-            Storage::disk('public')->delete($catatan->image);
-        }
-
-        $catatan->delete();
-
-        return redirect()->route('catatan.index')->with('success', 'Catatan berhasil dihapus');
-    }
+    return redirect()->route('catatan.index')->with('success', 'Catatan berhasil dihapus');
+}
 }
