@@ -10,6 +10,7 @@ use App\Models\ActivityLogs;
 use App\Models\User;
 use App\Notifications\CatatanActionNotification;
 
+
 class CatatanController extends Controller
 {
     public function index()
@@ -35,13 +36,14 @@ public function store(Request $request)
     $request->validate([
         'title' => 'required|string|max:255',
         'description' => 'required|string',
+        'user_id'=>auth()->id()
     ]);
 
     $data = $request->only(['title', 'description']);
     $data['user_id'] = auth()->id();
 
     $catatan = \App\Models\Catatan::create($data);
-
+////activity logs
     ActivityLogs::create([
         'user_id' => auth()->id(),
         'action' => 'create',
@@ -77,13 +79,15 @@ public function update(Request $request, Catatan $catatan)
         'description' => $request->description,
     ]);
 
-    ActivityLogs::create([
-        'user_id' => auth()->id(),
-        'action' => 'update',
-        'model_type' => Catatan::class,
-        'model_id' => $catatan->id,
-        'description' => "Memperbarui catatan #{$catatan->id} menjadi '{$catatan->title}'",
-    ]);
+
+ActivityLogs::create([
+    'user_id' => auth()->id(),
+    'action' => 'create_catatan',
+    'model_type' => Catatan::class,
+    'model_id' => $catatan->id,
+    'description' => 'User '.auth()->user()->name.' membuat catatan "'.$catatan->title.'"'
+]);
+
 
     $admins = User::where('role', 'admin')->get();
     foreach ($admins as $admin) {

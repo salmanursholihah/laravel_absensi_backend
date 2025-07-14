@@ -9,27 +9,22 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-   public function up()
+    public function up(): void
     {
-        Schema::create('catatans', function (Blueprint $table) {
+    Schema::create('messages', function (Blueprint $table) {
     $table->id();
-    $table->string('title');
-    $table->text('description')->nullable();
-    $table->string('image')->nullable();
+    $table->foreignId('sender_id')->constrained('users')->onDelete('cascade');
+    $table->foreignId('receiver_id')->constrained('users')->onDelete('cascade');
+    $table->text('body');
     $table->timestamps();
-
 });
-
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('catatans');
+        //
     }
-
 };

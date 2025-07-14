@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\ContactController;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Backend\{
@@ -27,6 +28,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\CatatanExportController;
 use App\Http\Controllers\PermissionExportController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\MessageController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -194,9 +197,13 @@ Route::middleware(['auth'])->group(function () {
 });
 
 ///notification
-Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])
-    ->name('notifications.markAsRead');
+    Route::get('/notifications/read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.read');
 
+///message
+Route::middleware('auth')->group(function(){
+    Route::get('/messages/{receiverId}', [MessageController::class, 'index'])->name('messages.index');
+    Route::post('messages', [MessageController::class, 'store'])->name('messages.store');
+});
 
-
-    
+///message bagian admin
+// Route::get('/message/{receiverId}', [MessageController::class, 'index'])->name('pages.message.index');
