@@ -67,11 +67,21 @@
 
                         <div class="card-footer text-right">
                             @if ($showMonthlyForm)
-                            <button type="button" id="nextToMonthly" class="btn btn-primary">Lanjut Evaluasi
-                                Bulanan</button>
-                            @endif
-                            <button type="submit" id="submitDailyOnly" class="btn btn-success">Simpan Harian</button>
+                            @php
+                            $today = \Carbon\Carbon::now();
+                            $isEndOfMonth = $today->day >= 28 && $today->day <= $today->daysInMonth;
+                                @endphp
+
+                                @if($isEndOfMonth)
+                                <a href="{{ route('evaluasi.bulanan') }}" class="btn btn-primary">Lanjut Evaluasi
+                                    Bulanan</a>
+                                @endif
+
+                                @endif
+                                <button type="submit" id="submitDailyOnly" class="btn btn-success">Simpan
+                                    Harian</button>
                         </div>
+
                     </div>
 
                     <!-- Step 2 -->

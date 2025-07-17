@@ -3,6 +3,8 @@
 namespace App\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use App\Models\workschedule;
+use App\Notifications\ReminderCheckInNotification;
 
 class Kernel extends HttpKernel
 {
@@ -70,4 +72,5 @@ class Kernel extends HttpKernel
 
 
     ];
+
 }

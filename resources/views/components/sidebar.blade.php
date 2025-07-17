@@ -7,7 +7,7 @@
             <a href="index.html">AM</a>
         </div>
         <ul class="sidebar-menu">
-            @if(auth()->user()->email === 'user1@gmail.com');
+            @if(auth()->user()->email === 'admin@gmail.com');
             <li class="nav-item ">
                 <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Dashboard</span></a>
 
@@ -19,7 +19,7 @@
             </li>
 
             <li class="nav-item">
-                <a href="{{ route('companies.index') }}" class="nav-link">
+                <a href="{{ route('pages.companies.index') }}" class="nav-link">
                     <i class="fas fa-columns"></i>
                     <span>Company</span>
                 </a>
@@ -51,6 +51,8 @@
                     <span>Catatan</span>
                 </a>
             </li>
+
+
 
 
 

@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('jadwal_kerjas', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');            $table->date('date');
+            $table->time('time_start');
+            $table->time('time_end');
+            $table->string('shift_name')->nullable();
             $table->timestamps();
         });
     }

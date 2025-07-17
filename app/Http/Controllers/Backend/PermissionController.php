@@ -5,9 +5,14 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Permission;
 use App\Models\User;
+use Database\Seeders\PermissionSeeder;
 use Illuminate\Http\Request;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\Permissions;
 
 class PermissionController extends Controller
 {
@@ -25,6 +30,8 @@ class PermissionController extends Controller
 
     public function index(Request $request)
 {
+
+    $users = User::all();
     $permissions = Permission::with('user')
         ->when($request->input('name'), function ($query, $name) {
             $query->whereHas('user', function ($query) use ($name) {
@@ -49,7 +56,7 @@ class PermissionController extends Controller
         ->orderBy('id', 'desc')
         ->paginate(10);
 
-        return view('pages.permission.index', compact('permissions'));
+        return view('pages.permission.index', compact('permissions','users'));
 }
 
 
@@ -152,4 +159,85 @@ class PermissionController extends Controller
             return false;
         }
     }
+
+// public function cetakBulanan($userId, $bulan, $tahun)
+// {
+//     $laporan = Permission::where('user_id', $userId)
+//         ->whereMonth('date', $bulan)
+//         ->whereYear('date', $tahun)
+//         ->get();
+
+//     $pdf = Pdf::loadView('laporan.absensi_bulanan', compact('laporan'));
+//     return $pdf->download('laporan_absensi_bulanan.pdf');
+// }
+
+// public function ExportPDF()
+// {
+//     $rekap = Permission::select(
+//         DB::raw('date'),
+//         DB::raw('COUNT(*) as total_absen')
+//     )
+
+//     ->groupby('date')
+//     ->get();
+
+//     $pdf = Pdf::loadView('laporan.rekap_izin_pdf', compact('laporan.izin'));
+//     return $pdf->download('rekap_izin.pdf');
+// }
+//    public function exportExcel()
+//    {
+//     return Excel::download(new Permission, 'laporan_catatan.xlsx');
+//    }
+
+// //    public function exportPermission()
+// //    {
+// //     $catatan =PermissionController::all();
+// //     $pdf = pdf::loadview('pages.catatans.pdf',compact ('catatans'));
+// //     return $pdf->download('laporan_catatan.pdf');
+// //    }
+    public function exportExcel()
+    {
+        return Excel::download(new Permissions, 'laporan_permission.xlsx');
+    }
+
+    public function exportPDF()
+    {
+        $permissions = Permission::all();
+        $pdf = Pdf::loadView('pages.permission.pdf', compact('permissions'));
+        return $pdf->download('laporan_permission.pdf');
+    }
+
+  public function exportPerbulan(Request $request)
+{
+    $month = $request->input('month', date('m'));
+    $year = $request->input('year', date('Y'));
+
+    $permissions = Permission::whereMonth('date_permission', $month)
+                             ->whereYear('date_permission', $year)
+                             ->get();
+
+    $pdf = Pdf::loadView('pages.permission.export', compact('permissions', 'month', 'year'));
+
+    return $pdf->download("permission_{$month}_{$year}.pdf");
+}
+
+
+public function exportPerUser(Request $request)
+{
+    $id = $request->user_id ?? auth()->id();
+    $user = User::findOrFail($id);
+
+    $permissions = permission::where('user_id', $user->id)->get();
+
+    if ($permissions->isEmpty()) {
+        // INI BENAR, karena route() akan panggil index()
+        return redirect()->route('permissions.index')->with('error', 'Data tidak ditemukan.');
+    }
+
+    $pdf = Pdf::loadView('pages.permission.export_user', compact('permissions', 'user'));
+
+    return $pdf->download("permission_{$user->name}.pdf");
+}
+
+
 }

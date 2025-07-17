@@ -21,7 +21,7 @@
         <div class="section-body">
             <h2 class="section-title">Companies</h2>
             <div class="section-header-button">
-                <a href="{{ route('companies.create') }}" class="btn btn-primary">Add New</a>
+                <a href="{{ route('pages.companies.create') }}" class="btn btn-primary">Add New</a>
             </div>
             <p class="section-lead">
                 You can manage all companies, such as editing, deleting and more.
@@ -33,7 +33,7 @@
                         <div class="card-header">
                             <h4>All Companies</h4>
                             <div class="ml-auto">
-                                <form method="GET" action="{{ route('companies.index') }}">
+                                <form method="GET" action="{{ route('pages.companies.index') }}">
                                     <div class="input-group">
                                         <input type="text" class="form-control" placeholder="Search by name"
                                             name="name">

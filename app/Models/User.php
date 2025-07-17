@@ -50,5 +50,10 @@ class User extends Authenticatable
     public function permission(){
         return  $this->hasMany(Permission::class);
     }
+
+    public function catatans()
+    {
+        return $this->hasMany(Catatan::class);
+    }
     
 }

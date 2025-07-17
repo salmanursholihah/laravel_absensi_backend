@@ -7,12 +7,16 @@ use App\Models\Attendance;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
+use App\Models\User;
 
 
 class RekapAttendanceController extends Controller
 {
 
-
+public function index()
+{
+    $users = User::all();
+}
 
     public function ExportPDF()
     {
@@ -57,11 +61,7 @@ $laporanBulanan = Attendance::whereMonth('date', $bulan)
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
-    }
-
+   
     /**
      * Show the form for creating a new resource.
      */

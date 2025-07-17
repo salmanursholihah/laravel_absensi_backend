@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('catatans', function (Blueprint $table) {
-            $table->string('image')->nullable()->after('description');
+        Schema::create('events', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->date('start');
+            $table->date('end')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -21,8 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('catatans', function (Blueprint $table) {
-           $table->dropColumns('image');
-        });
+        Schema::dropIfExists('events');
     }
 };
