@@ -4,21 +4,24 @@ namespace App\Http\Controllers\backend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
 
-protected function authenticated(Request $request, $user)
+public function showLoginForm()
 {
-    $user = $user->fresh();
+return view('admin.login');
+}
 
-    Log::info('Role setelah fresh:', ['role' => $user->role]);
+public function login(Request $request)
+{
+$credentials = $request->only('email', 'password');
 
-    if ($user->role === 'admin') {
-        return redirect()->route('admin.home');
-    }
+if (Auth::guard('admin')->attempt($credentials)) {
+return redirect()->route('admin.home');
+}
 
-    return redirect()->route('user.home');
+return back()->withErrors(['email' => 'Login gagal!']);
 }
 }

@@ -15,6 +15,6 @@ class LoginResponse implements LoginResponseContract
             return redirect()->route('home'); // atau route admin sesuai kamu
         }
 
-        return redirect()->route('user.public.index'); // atau route user sesuai kamu
+        return redirect()->route('user.zpublic.index'); // atau route user sesuai kamu
     }
 }
