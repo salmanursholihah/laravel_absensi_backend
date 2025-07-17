@@ -30,12 +30,15 @@
             <h2 class="section-title">Form Catatan</h2>
 
             <div class="card">
-                <form action="{{ route('catatan.store') }}" method="POST" enctype="multipart/form-data">
+                <form id="multiStepForm" action="{{ route('catatan.store') }}" method="POST"
+                    enctype="multipart/form-data">
                     @csrf
                     <div class="card-header">
                         <h4>Input Catatan</h4>
                     </div>
-                    <div class="card-body">
+
+                    <!-- Step 1 -->
+                    <div class="card-body step-content" id="step-1">
                         <div class="form-group">
                             <label>Judul</label>
                             <input type="text" class="form-control @error('title') is-invalid @enderror" name="title"
@@ -61,9 +64,46 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+
+                        <div class="card-footer text-right">
+                            @if ($showMonthlyForm)
+                            <button type="button" id="nextToMonthly" class="btn btn-primary">Lanjut Evaluasi
+                                Bulanan</button>
+                            @endif
+                            <button type="submit" id="submitDailyOnly" class="btn btn-success">Simpan Harian</button>
+                        </div>
                     </div>
-                    <div class="card-footer text-right">
-                        <button class="btn btn-primary">Submit</button>
+
+                    <!-- Step 2 -->
+                    <div class="card-body step-content d-none" id="step-2">
+                        <div class="form-group">
+                            <label>Target</label>
+                            <textarea class="form-control @error('target') is-invalid @enderror"
+                                name="target">{{ old('target') }}</textarea>
+                            @error('target')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label>Permasalahan</label>
+                            <textarea class="form-control @error('kendala') is-invalid @enderror"
+                                name="kendala">{{ old('kendala') }}</textarea>
+                            @error('kendala')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label>Uraian Penyelesaian</label>
+                            <textarea class="form-control @error('solusi') is-invalid @enderror"
+                                name="solusi">{{ old('solusi') }}</textarea>
+                            @error('solusi')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="card-footer text-right">
+                            <button type="submit" class="btn btn-primary">Simpan Semua</button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -74,4 +114,10 @@
 @endsection
 
 @push('scripts')
+<script>
+document.getElementById('nextToMonthly').addEventListener('click', function() {
+    document.getElementById('step-1').classList.add('d-none');
+    document.getElementById('step-2').classList.remove('d-none');
+});
+</script>
 @endpush

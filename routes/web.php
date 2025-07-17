@@ -115,15 +115,19 @@ use App\Http\Controllers\Backend\{
     DashboardController,
     PublicController,
     UserCatatanController,
-    ActifityLogController
+    ActifityLogController,
+    EventController
+    
   
 };
 use App\Http\Controllers\AuthenticatedSessionController;
 use App\Http\Controllers\AdminAuthController;
 use App\Exports\CatatanExport;
-use App\Http\Middleware\RoleMiddleware;
+use App\Http\Middleware\CheckRole;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\CatatanExportController;
+use App\Http\Controllers\PermissionExportController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -156,10 +160,10 @@ Route::middleware(['auth:admin,user'])->group(function () {
     })->name('index');
 
 
-    Route::middleware(['auth', 'RoleMiddleware:admin'])->group(function(){
+    Route::middleware(['auth', 'CheckRole:admin'])->group(function(){
         Route::get('/home');
     });
-    Route::middleware(['auth', 'RoleMiddleware:user'])->group(function(){
+    Route::middleware(['auth', 'CheckRole:user'])->group(function(){
         Route::get('/public');
     });
 
@@ -200,7 +204,7 @@ Route::middleware(['auth', 'CheckRole:admin'])->prefix('pages')->name('pages.')-
 
 
 // Role User: diarahkan ke halaman 'public'
-Route::middleware(['auth', 'CheckRole:user'])->prefix('user')->name('user.')->group(function () {
+Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(function () {
     Route::get('public', [PublicController::class, 'index'])->name('public.index');
     Route::get('public/create', [PublicController::class, 'create'])->name('public.create');
     Route::post('public', [PublicController::class, 'store'])->name('public.store');
@@ -218,3 +222,73 @@ Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('act
 
 //rekap keterlambatan
 Route::get('/rekap/keterlambatan', [AttendanceController::class, 'rekapketerlambatan'])->name('rekap.keterlambatan');
+
+//rekap izin user
+Route::get('/rekap/izin', [PermissionController::class, 'rekapizin'])->name('rekapizin');
+
+//routing export pdf
+///rekap per hari
+Route::get('/rekap-absensi-pdf', [AttendanceController::class, 'exportPDF']);
+
+//rekapp user
+Route::get('/laporan/user/{id}', [AttendanceController::class,'cetakPerUser' ]);
+///rekap per minggu
+
+Route::get('/laporan/mingguan/{id}/{start}/{end}', [AttendanceController::class, 'cetakMingguan']);
+///rekap per bulan
+Route::get('/laporan/bulanan/{id}/{bulan}/{tahun}', [AttendanceController::class, 'cetakBulanan']);
+
+///rekap izin per bulan
+Route::get('/laporan/permission/bulanan/{id}/{bulan}/{tahun}', [PermissionController::class, 'cetakLaporanIzin']);
+
+//permission export 
+
+Route::get('/permission/export/excel', [PermissionController::class, 'exportExcel'])->name('tasks.export.excel');
+Route::get('/permission/export/pdf', [PermissionController::class, 'exportPDF'])->name('permission.export.pdf');
+Route::post('/export-permission', [PermissionController::class, 'exportPerbulan'])->name('export.perbulan');
+Route::post('export-permission-peruser]', [PermissionController::class, 'exportPerUser'])->name('export.peruser');
+
+////calendar
+// Route::get('/calendar', [EventController::class, 'index']);
+// Route::get('/events', [EventController::class, 'fetchEvents']);use App\Http\Controllers\EventController;
+
+Route::get('/calendar', [EventController::class, 'index']);
+Route::get('/events', [EventController::class, 'fetchEvents']);
+Route::post('/events', [EventController::class, 'store']);
+
+
+
+
+////work schedules
+Route::resource('work_schedules',App\Http\Controllers\WorkSchedulesController::class);
+
+
+
+// // // company
+Route::middleware(['auth'])->group(function () {
+    Route::get('/companies', [CompanyController::class, 'index'])->name('pages.companies.index');
+    Route::get('/companies/show', [CompanyController::class, 'show'])->name('pages.companies.show');
+    Route::get('/companies/create', [CompanyController::class, 'create'])->name('pages.companies.create');
+    Route::post('/companies/store', [CompanyController::class, 'store'])->name('companies.store');    
+    Route::get('/companies/edit', [CompanyController::class, 'edit'])->name('pages.companies.edit');
+    Route::put('/companies/update', [CompanyController::class, 'update'])->name('companies.update');
+
+    // Jika ada fitur delete
+    Route::delete('/companies/{id}', [CompanyController::class, 'destroy'])->name('companies.destroy');
+});
+
+///notification
+Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])
+    ->name('notifications.markAsRead');
+
+//routing export document
+Route::get('/catatan/export/excel', [catatancontroller::class, 'exportExcel'])->name('catatan.export.excel');
+Route::get('/catatan/export/pdf', [catatancontroller::class, 'exportPDF'])->name('catatan.export.pdf');
+Route::post('/export-catatan', [catatancontroller::class, 'exportPerBulan' ])->name('export.perbulan');
+Route::post('export-catatan-peruser', [catatancontroller::class, 'exportPerUser'])->name('export.peruser');
+
+
+
+
+
+    

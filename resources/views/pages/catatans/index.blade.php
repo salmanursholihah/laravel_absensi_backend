@@ -46,7 +46,39 @@
                                 </form>
                             </div>
                         </div>
+                        <div>
+                            <a href="{{ route('catatan.export.excel') }}" class="btn btn-success">Export Excel</a>
+                            <a href="{{ route('catatan.export.pdf') }}" class="btn btn-primary">Export PDF</a>
 
+                            <br><br>
+
+
+
+                            <!-- Export data per bulan -->
+                            <form method="POST" action="{{ route('export.perbulan') }}">
+                                @csrf
+                                <input type="number" name="month" value="{{ date('m') }}">
+                                <input type="number" name="year" value="{{ date('Y') }}">
+                                <button type="submit" class="btn btn-warning">Download PDF</button>
+                            </form>
+
+                            <!-- Form export per user -->
+                            <form action="{{ route('export.peruser') }}" method="POST">
+                                @csrf
+                                <label for="user_id">Pilih User:</label>
+                                <select name="user_id" id="user_id">
+                                    @if(isset($users) && count($users))
+                                    @foreach ($users as $user)
+                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                    @endforeach
+                                    @else
+                                    <option value="">Tidak ada user tersedia</option>
+                                    @endif
+                                </select>
+
+                                <button type="submit">Export PDF</button>
+                            </form>
+                        </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
                                 <table class="table table-striped mb-0">
@@ -56,8 +88,11 @@
                                             <th>Title</th>
                                             <th>Description</th>
                                             <th>Image</th>
-                                            <th>Created At</th>
-                                            <th>Updated At</th>
+                                            <th>Target</th>
+                                            <th>Permasalahan</th>
+                                            <th>Uraian penyelesaian</th>
+                                            <th>Tanggal input</th>
+                                            <th>Diperbarui</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -78,6 +113,9 @@
                                                 @endif
                                             </td>
 
+                                            <td>{{ $catatan->target }}</td>
+                                            <td>{{ $catatan->kendala }}</td>
+                                            <td>{{ $catatan->solusi }}</td>
                                             <td>{{ $catatan->created_at }}</td>
                                             <td>{{ $catatan->updated_at }}</td>
                                             <td>
