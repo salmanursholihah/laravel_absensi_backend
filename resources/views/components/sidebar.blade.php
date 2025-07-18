@@ -51,6 +51,13 @@
                     <span>Catatan</span>
                 </a>
             </li>
+            <li class="#{ request()->is('chat*') ? 'active' : '' }">
+                <a href="{{ route('chat.index') }}" class="nav-link">
+                    <i class="fas fa-comments"></i>
+                    <span>Chat</span>
+                </a>
+
+            </li>
 
 
 

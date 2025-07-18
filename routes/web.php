@@ -128,6 +128,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\CatatanExportController;
 use App\Http\Controllers\PermissionExportController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\MessageController; 
 
 /*
 |--------------------------------------------------------------------------
@@ -287,6 +288,16 @@ Route::get('/catatan/export/pdf', [catatancontroller::class, 'exportPDF'])->name
 Route::post('/export-catatan', [catatancontroller::class, 'exportPerBulan' ])->name('export.perbulan');
 Route::post('export-catatan-peruser', [catatancontroller::class, 'exportPerUser'])->name('export.peruser');
 
+
+
+//messages
+Route::middleware(['auth'])->group(function () {
+Route::get('/chat', [MessageController::class, 'index'])->name('chat.index');
+Route::get('/chat/{receiverId}', [MessageController::class, 'chatWith'])->name('chat.show')->middleware('auth');
+Route::post('/chat/send', [MessageController::class, 'send'])->name('chat.send')->middleware('auth');
+
+
+});
 
 
 
