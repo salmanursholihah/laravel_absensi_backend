@@ -51,6 +51,17 @@
   <input type="file" name="attachments[]" accept="image/*" multiple><br>
   <button type="button" id="send">Send</button>
 </form>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+    .then(function(reg) {
+      console.log('Service Worker registered!', reg);
+    }).catch(function(err) {
+      console.log('Service Worker registration failed:', err);
+    });
+  }
+</script>
+
 
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
