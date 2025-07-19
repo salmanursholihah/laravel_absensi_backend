@@ -167,11 +167,18 @@ Route::middleware(['auth:admin,user'])->group(function () {
     Route::middleware(['auth', 'CheckRole:user'])->group(function(){
         Route::get('/public');
     });
+});
 
     // Profile
+Route::middleware(['auth'])->group(function () {
     Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+  
 });
+        
+
+
+
 
 // Role Admin
 Route::middleware(['auth', 'role:admin'])->group(function () {
@@ -295,8 +302,6 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/chat', [MessageController::class, 'index'])->name('chat.index');
 Route::get('/chat/{receiverId}', [MessageController::class, 'chatWith'])->name('chat.show')->middleware('auth');
 Route::post('/chat/send', [MessageController::class, 'send'])->name('chat.send')->middleware('auth');
-
-
 });
 
 
