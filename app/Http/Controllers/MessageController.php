@@ -15,23 +15,38 @@ class MessageController extends Controller
         return view('chat.index', compact('users'));
     }
 
-    public function send(Request $request)
-    {
-        $request->validate([
-            'receiver_id' => 'required|exists:users,id',
-            'content' => 'required|string',
-        ]);
+ 
+public function send(Request $request)
+{
+    $request->validate([
+        'receiver_id' => 'required|exists:users,id',
+        'content' => 'nullable|string',
+        'attachments.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    ]);
 
-        $message = Message::create([
-            'sender_id' => Auth::id(),
-            'receiver_id' => $request->receiver_id,
-            'content' => $request->content,
-        ]);
+    $message = new Message();
+    $message->sender_id = auth()->id();
+    $message->receiver_id = $request->receiver_id;
+    $message->content = $request->content;
 
-        broadcast(new MessageSent($message))->toOthers();
+    $filenames = [];
 
-        return response()->json(['success' => true, 'message' => $message]);
+    if ($request->hasFile('attachments')) {
+        foreach ($request->file('attachments') as $file) {
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('public/message_attachments', $filename);
+            $filenames[] = $filename;
+        }
+        $message->attachment = json_encode($filenames);
     }
+
+    $message->save();
+
+    return response()->json(['success' => true]);
+}
+
+
+
     public function chatWith($receiverId)
 {
     $receiver = User::findOrFail($receiverId);
