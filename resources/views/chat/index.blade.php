@@ -1,8 +1,9 @@
+{{-- File: chat.index --}}
 @foreach ($users as $user)
 <div class="user">
     <a href="{{ route('chat.show', $user->id) }}">
-        <img src="{{ asset('storage/avatars/' . ($user->avatar ?? 'default.png')) }}" width="30"
-            style="border-radius: 50%;">
+        <img src="{{ asset('storage/avatars/' . ($user->avatar ?? 'default.png')) }}"
+             class="avatar">
         {{ $user->name }}
     </a>
 </div>
@@ -10,6 +11,15 @@
 
 <textarea id="message"></textarea>
 <button id="send">Send</button>
+
+<style>
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+</style>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="{{ mix('js/app.js') }}"></script>
