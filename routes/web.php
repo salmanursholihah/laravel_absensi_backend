@@ -297,12 +297,35 @@ Route::post('export-catatan-peruser', [catatancontroller::class, 'exportPerUser'
 
 
 
-//messages
-Route::middleware(['auth'])->group(function () {
-Route::get('/chat', [MessageController::class, 'index'])->name('chat.index');
-Route::get('/chat/{receiverId}', [MessageController::class, 'chatWith'])->name('chat.show')->middleware('auth');
-Route::post('/chat/send', [MessageController::class, 'send'])->name('chat.send')->middleware('auth');
+// // Admin routes
+// Route::middleware(['auth', 'admin'])->group(function () {
+//     Route::get('/pages/chat', [MessageController::class, 'indexadmin'])->name('pages.chat.index');
+//     Route::get('/pages/chat/{receiverId}', [MessageController::class, 'chatWithadmin'])->name('pages.chat.show');
+//     Route::post('/pages/chat/send', [MessageController::class, 'send'])->name('pages.chat.send');
+// });
+
+// // User routes
+// Route::middleware(['auth'])->group(function () {
+//     Route::get('/chat', [MessageController::class, 'indexUser'])->name('chat.index');
+//     Route::get('/chat/{receiverId}', [MessageController::class, 'chatWithUser'])->name('chat.show');
+//     Route::post('/chat/send', [MessageController::class, 'send'])->name('chat.send');
+// });
+
+
+// Admin routes
+Route::middleware(['auth', 'is_admin'])->group(function () {
+    Route::get('/pages/chat', [MessageController::class, 'indexAdmin'])->name('pages.chat.index');
+    Route::get('/pages/chat/{receiverId}', [MessageController::class, 'chatWithAdmin'])->name('pages.chat.show');
+    Route::post('/pages/chat/send', [MessageController::class, 'send'])->name('pages.chat.send');
 });
+
+// User routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/chat', [MessageController::class, 'indexUser'])->name('chat.index');
+    Route::get('/chat/{receiverId}', [MessageController::class, 'chatWithUser'])->name('chat.show');
+    Route::post('/chat/send', [MessageController::class, 'send'])->name('chat.send');
+});
+
 
 
 

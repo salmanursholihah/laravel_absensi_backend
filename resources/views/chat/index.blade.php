@@ -1,62 +1,25 @@
-{{-- File: chat.index --}}
 @foreach ($users as $user)
-<div class="user">
-    <a href="{{ route('chat.show', $user->id) }}">
-        <img src="{{ asset('storage/avatars/' . ($user->avatar ?? 'default.png')) }}"
-             class="avatar">
-        {{ $user->name }}
-    </a>
-</div>
+    <div class="user">
+        <a href="{{ route('chat.show', $user->id) }}">
+            <img src="{{ asset('storage/avatars/' . ($user->avatar ?? 'default.png')) }}" class="avatar">
+            {{ $user->name }}
+        </a>
+    </div>
 @endforeach
 
-<textarea id="message"></textarea>
-<button id="send">Send</button>
-
 <style>
-  .avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="{{ mix('js/app.js') }}"></script>
-
-<script>
-let receiverId = null;
-
-document.querySelectorAll('.user').forEach(user => {
-    user.addEventListener('click', function() {
-        receiverId = this.dataset.id;
-        alert('Chatting with user ID: ' + receiverId);
-    });
-});
-
-document.getElementById('send').addEventListener('click', function() {
-    const message = document.getElementById('message').value;
-
-    if (!receiverId) {
-        alert('Pilih user dulu!');
-        return;
-    }
-
-    axios.post('/chat/send', {
-            receiver_id: receiverId,
-            content: message
-        })
-        .then(response => {
-            console.log('Message sent:', response.data);
-            document.getElementById('message').value = '';
-        })
-        .catch(error => {
-            console.error('Error sending message:', error);
-        });
-});
-
-Echo.channel('chat.{{ auth()->id() }}')
-    .listen('MessageSent', (e) => {
-        console.log('New message received:', e);
-    });
-</script>
+{{-- resources/views/chat/index.blade.php --}}
+<!-- <h2>Daftar Admin</h2>
+@foreach ($admins as $admin)
+  <div>
+    <a href="{{ route('chat.show', $admin->id) }}">Chat dengan {{ $admin->name }}</a>
+  </div>
+@endforeach -->
